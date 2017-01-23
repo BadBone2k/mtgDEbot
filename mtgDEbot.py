@@ -2,10 +2,11 @@
 import asyncio
 import telepot
 import requests
+import bs4
 from pprint import pprint
 from telepot.aio.helper import InlineUserHandler, AnswererMixin, ChatHandler
 from telepot.aio.delegate import pave_event_space, per_chat_id, create_open, per_inline_from_id
-from bs4 import BeautifulSoup as BS
+
 
 """
 (vorher mit pip3.5 installieren: telepot, requests, beautifulsoup4)
@@ -15,6 +16,16 @@ $ python3.5 mtgDEbot.py <token>
 Telegram Bot, der Magickarten von http://magiccards.info inline sucht.
 Die Suche wurde auf deutsche Karten eingeschränkt.
 So lange nichts eingegeben wurde, wird eine zufällige Karte angezeigt.
+
+Verwendung des Bots inline: @mtgDEbot <Kartenname> [.,/| <Edition>]
+
+Die Angabe der Edition ist optional, es gibt verschiedene Trenner,
+hinter dem Trenner kann ein Leerzeichen sein, muss aber nicht.
+"""
+
+"""
+Wird der Bot direkt angesprochen, antwortet er mit einer kleinen Anleitung.
+Bisher keine expliziten Befehle wie /help oder so
 """
 
 
@@ -35,6 +46,11 @@ class ChatBot(ChatHandler):
             await self.sender.sendMessage(answer)
 
 
+"""
+Hier handelt der Bot inline in (Gruppen-) Chats und erfüllt seine eigentliche Aufgabe
+"""
+
+
 class InlineHandler(InlineUserHandler, AnswererMixin):
     def __init__(self, *args, **kwargs):
         super(InlineHandler, self).__init__(*args, **kwargs)
@@ -51,9 +67,11 @@ class InlineHandler(InlineUserHandler, AnswererMixin):
             nextisedition = False
             articles = []
             query_id, from_id, query_string = telepot.glance(msg, flavor='inline_query')
-            #print(self.id, ':', 'Inline Query:', query_id, from_id, query_string)
+            # print(self.id, ':', 'Inline Query:', query_id, from_id, query_string)
 
-            # Suchbegriff in Einzelteile zerlegen und hinten die Edition extrahieren
+            """
+            Suchbegriff in Einzelteile zerlegen und hinten die Edition extrahieren
+            """
             words = query_string.split()
             for word in words:
                 if word.startswith(trenner) and len(word) >= 3:
@@ -67,20 +85,27 @@ class InlineHandler(InlineUserHandler, AnswererMixin):
                 else:
                     search_string.append(word)
 
+            """
+            Suchstring erzeugen, falls noch nicht eingegeben wurde, wird eine zufällige Karte ausgegeben
+            """
             search_string = search_url + search_lang + "+".join(search_string)
             if edition_string:
-                #print(edition_string)
+                # print(edition_string)
                 edition_string = "+e%3A" + edition_string + "%2Fde"
                 search_string += edition_string
             search_string += '&v=scan&s=cname'
 
             if not query_string:
                 search_string = 'http://magiccards.info/random.html'
-            #print(search_string)
+            # print(search_string)
 
             response = session.get(search_string, headers=headers)
 
-            soup = BS(response.text, "html.parser")
+            """
+            Bilder extrahieren und nur sinnvolle (hier große) übrig lassen
+            das sind dann hoffentlich nur Magickarten
+            """
+            soup = bs4.BeautifulSoup(response.text, "html.parser")
             for imgtag in soup.find_all('img'):
                 if int(imgtag['width']) > 50:
                     # print(imgtag['src'])
@@ -100,12 +125,19 @@ class InlineHandler(InlineUserHandler, AnswererMixin):
 
         self.answerer.answer(msg, compute_answer)
 
+    """
+    Nach Auswahl einer Karte wird hier das Ergebnis verschickt
+    """
+
     def on_chosen_inline_result(self, msg):
-        #pprint(msg)
+        pprint(msg)
         result_id, from_id, query_string = telepot.glance(msg, flavor='chosen_inline_result')
         print(self.id, ':', 'Chosen Inline Result:', result_id, from_id, query_string)
 
 
+"""
+Die eigentliche ausführung des Bots
+"""
 TOKEN = sys.argv[1]  # get token from command-line
 bot = telepot.aio.DelegatorBot(TOKEN, [
     pave_event_space()(
