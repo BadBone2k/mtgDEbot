@@ -21,6 +21,11 @@ Verwendung des Bots inline: @mtgDEbot <Kartenname> [.,/| <Edition>]
 
 Die Angabe der Edition ist optional, es gibt verschiedene Trenner,
 hinter dem Trenner kann ein Leerzeichen sein, muss aber nicht.
+
+Der ganze Code basiert auf Codebeispielen und Tutorials, die hier zu finden sind:
+    https://github.com/nickoala/telepot
+
+Danke!
 """
 
 """
@@ -47,7 +52,7 @@ class ChatBot(ChatHandler):
 
 
 """
-Hier handelt der Bot inline in (Gruppen-) Chats und erfüllt seine eigentliche Aufgabe
+Hier handelt der Bot inline in Chats und erfüllt seine eigentliche Aufgabe
 """
 
 
