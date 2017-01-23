@@ -11,5 +11,13 @@ pypath=/package/host/localhost/python-3.5/bin
 #$pypath/pip3.5 install beautifulsoup4 --user
 
 cd ~/bin/mtgDEbot/
-token=$(cat tokenfile)
+if [ -e "tokenfile" ]; then
+  token=$(cat tokenfile)
+else
+  echo "bitte Telegram API Token in tokenfile eintragen"
+  echo "123456789:ABC-ABCDEFGHIJKLMNOPQRSTUVWXYZABCDE" > tokenfile
+  echo "dummy file wurde erzeugt"
+  exit 1
+fi
+
 $pypath/python3.5 mtgDEbot.py $token
