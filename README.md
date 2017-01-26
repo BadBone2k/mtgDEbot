@@ -2,10 +2,14 @@
 
 Telegram Bot, der Magickarten von http://magiccards.info inline sucht und verschickt.
 
-Voraussetzung: mindestens Python 3.5 mit folgenden Paketen:
+## Voraussetzung
+### mindestens Python 3.5 mit folgenden Paketen:
   * telepot
   * requests
   * beautifulsoup4
+
+### Bot bei Telegram registrieren
+Der Bot muss bei Telegram (@BotFather) registriert werden, um einen API-Token zu erhalten. Außerdem müssen hier /setinline und /setinlinefeedback für den Bot gesetzt werden.
 
 ## Ausführung
 
@@ -14,7 +18,6 @@ $ python3.5 mtgDEbot.py <token>
 ```
 
 mtgDEbot.sh zeigt exemplarisch, wie der Bot auf https://uberspace.de/ gestartet werden kann.
-Vorher muss der Bot noch bei Telegram registriert werden, damit mit man seinn API-Token erhält.
 
 ## Verwendung
 
