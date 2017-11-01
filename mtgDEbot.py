@@ -6,7 +6,7 @@ import bs4
 from pprint import pprint
 from telepot.aio.helper import InlineUserHandler, AnswererMixin, ChatHandler
 from telepot.aio.delegate import pave_event_space, per_chat_id, create_open, per_inline_from_id
-
+from telepot.namedtuple import *
 
 """
 (vorher mit pip3.5 installieren: telepot, requests, beautifulsoup4)
@@ -64,7 +64,8 @@ class InlineHandler(InlineUserHandler, AnswererMixin):
         def compute_answer():
             session = requests.Session()
             headers = {'user-agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko)'}
-            search_url = 'http://magiccards.info/query'
+            base_url = 'https://magiccards.info'
+            search_url = base_url + '/query'
             search_lang = '?q=l%3Ade+'
             trenner = tuple(["|", "/", ".", ","])
             search_string = []
@@ -72,7 +73,7 @@ class InlineHandler(InlineUserHandler, AnswererMixin):
             nextisedition = False
             articles = []
             query_id, from_id, query_string = telepot.glance(msg, flavor='inline_query')
-            # print(self.id, ':', 'Inline Query:', query_id, from_id, query_string)
+            print(self.id, ':', 'Inline Query:', query_id, from_id, query_string)
 
             """
             Suchbegriff in Einzelteile zerlegen und hinten die Edition extrahieren
@@ -101,8 +102,9 @@ class InlineHandler(InlineUserHandler, AnswererMixin):
             search_string += '&v=scan&s=cname'
 
             if not query_string:
-                search_string = 'http://magiccards.info/random.html'
-            # print(search_string)
+                search_string = 'https://magiccards.info/random.html'
+                query_string = 'Random'
+            print(search_string)
 
             response = session.get(search_string, headers=headers)
 
@@ -113,16 +115,19 @@ class InlineHandler(InlineUserHandler, AnswererMixin):
             soup = bs4.BeautifulSoup(response.text, "html.parser")
             for imgtag in soup.find_all('img'):
                 if int(imgtag['width']) > 50:
-                    # print(imgtag['src'])
-                    curr_img = {
-                        "type": "photo",
-                        "id": imgtag["src"],
-                        "photo_url": imgtag["src"],
-                        "thumb_url": imgtag["src"]
-                    }
+                    send_img = base_url + imgtag['src']
+                    # send_img = imgtag['src']
+                    print(send_img)
+                    curr_img = InlineQueryResultPhoto(
+                        id = send_img,
+                        photo_url = send_img,
+                        thumb_url = send_img,
+                        photo_width=100, photo_height=140
+                    )
                     if len(articles) > 14:
                         break
 
+                    print(curr_img)
                     articles.append(curr_img)
 
             # articles = [{'type': 'article', 'id': 'abc', 'title': query_string, 'message_text': query_string}]
