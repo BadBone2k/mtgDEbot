@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Umgebung für https://uberspace.de/
-# muss angepasst werden, wenn Python 3.5 Defauklt ist.
+# muss angepasst werden, wenn Python 3.5 Default ist.
 
 pypath=/package/host/localhost/python-3.5/bin
 
