@@ -128,8 +128,8 @@ class InlineHandler(InlineUserHandler, AnswererMixin):
             elif cards['object'] == 'card':
                 curr_img = InlineQueryResultPhoto(
                     id=cards['id'],
-                    photo_url=card['image_uris']['normal'],
-                    thumb_url=card['image_uris']['small'],
+                    photo_url=cards['image_uris']['normal'],
+                    thumb_url=cards['image_uris']['small'],
                     photo_width=100, photo_height=140
                 )
 
