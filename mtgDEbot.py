@@ -65,7 +65,7 @@ class InlineHandler(InlineUserHandler, AnswererMixin):
             api_url = 'https://api.scryfall.com/cards'
             api_search = api_url + '/search'
             api_random = api_url + '/random'
-            search_lang = '?include_multilingual=true'
+            search_lang = '?include_multilingual=true&lang%3Ade&q='
 
             trenner = tuple(["|", "/", ".", ","])
             search_string = []
@@ -94,7 +94,7 @@ class InlineHandler(InlineUserHandler, AnswererMixin):
             """
             Suchstring erzeugen, falls noch nicht eingegeben wurde, wird eine zufällige Karte ausgegeben
             """
-            search_string = api_url + search_lang + "&q=" + "+".join(search_string)
+            search_string = api_url + search_lang + "+".join(search_string)
             if edition_string:
                 # print(edition_string)
                 edition_string = "+edition%3A" + edition_string
@@ -127,7 +127,7 @@ class InlineHandler(InlineUserHandler, AnswererMixin):
 
             elif cards['object'] == 'card':
                 curr_img = InlineQueryResultPhoto(
-                    id=card['id'],
+                    id=cards['id'],
                     photo_url=card['image_uris']['normal'],
                     thumb_url=card['image_uris']['small'],
                     photo_width=100, photo_height=140
