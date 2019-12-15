@@ -2,7 +2,7 @@
 import asyncio
 import telepot
 import requests
-import bs4
+import json
 from pprint import pprint
 from telepot.aio.helper import InlineUserHandler, AnswererMixin, ChatHandler
 from telepot.aio.delegate import pave_event_space, per_chat_id, create_open, per_inline_from_id
@@ -62,12 +62,13 @@ class InlineHandler(InlineUserHandler, AnswererMixin):
 
     def on_inline_query(self, msg):
         def compute_answer():
-            session = requests.Session()
-            headers = {'user-agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko)'}
-            base_url = 'https://magiccards.info'
-            search_url = base_url + '/query'
-            search_lang = '?q=l%3Ade+'
+            api_url = 'https://api.scryfall.com/cards'
+            api_search = api_url + '/search'
+            api_random = api_url + '/random'
+            search_lang = '?include_multilingual=true'
+
             trenner = tuple(["|", "/", ".", ","])
+            api_call = []
             search_string = []
             edition_string = ''
             nextisedition = False
@@ -94,39 +95,25 @@ class InlineHandler(InlineUserHandler, AnswererMixin):
             """
             Suchstring erzeugen, falls noch nicht eingegeben wurde, wird eine zufällige Karte ausgegeben
             """
-            search_string = search_url + search_lang + "+".join(search_string)
+            api_call = api_url + search_lang + "+".join(search_string)
             if edition_string:
                 # print(edition_string)
-                edition_string = "+e%3A" + edition_string + "%2Fde"
+                edition_string = "+edition%3A" + edition_string
                 search_string += edition_string
-            search_string += '&v=scan&s=cname'
 
             if not query_string:
-                search_string = 'https://magiccards.info/random.html'
-                query_string = 'Random'
+                search_string = api_random
             print(search_string)
 
-            response = session.get(search_string, headers=headers)
+            response = requests.get(search_string)
 
             """
-            Bilder extrahieren und nur sinnvolle (hier große) übrig lassen
-            das sind dann hoffentlich nur Magickarten
+            Bilder extrahieren
             """
-            soup = bs4.BeautifulSoup(response.text, "html.parser")
-            for imgtag in soup.find_all('img'):
-                if int(imgtag['width']) > 50:
-                    send_img = base_url + imgtag['src']
-                    # send_img = imgtag['src']
-                    print(send_img)
-                    curr_img = InlineQueryResultPhoto(
-                        id = send_img,
-                        photo_url = send_img,
-                        thumb_url = send_img,
-                        photo_width=100, photo_height=140
-                    )
-                    if len(articles) > 14:
-                        break
-
+            cards = json.loads(response.text)
+            if cards['object'] == 'list':
+                for card in cards['data']:
+                    curr_img = card['image_uris']['normal']
                     print(curr_img)
                     articles.append(curr_img)
 
