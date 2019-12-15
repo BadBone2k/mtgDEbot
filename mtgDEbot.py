@@ -99,13 +99,13 @@ class InlineHandler(InlineUserHandler, AnswererMixin):
             if edition_string:
                 # print(edition_string)
                 edition_string = "+edition%3A" + edition_string
-                search_string += edition_string
+                api_call += edition_string
 
             if not query_string:
-                search_string = api_random
-            print(search_string)
+                api_call = api_random
+            print(api_call)
 
-            response = requests.get(search_string)
+            response = requests.get(api_call)
 
             """
             Bilder extrahieren
