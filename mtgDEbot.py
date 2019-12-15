@@ -120,6 +120,9 @@ class InlineHandler(InlineUserHandler, AnswererMixin):
                         photo_width=100, photo_height=140
                     )
 
+                    if len(articles) > 14:
+                        break
+
                     print(curr_img)
                     articles.append(curr_img)
 
