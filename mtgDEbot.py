@@ -114,26 +114,24 @@ class InlineHandler(InlineUserHandler, AnswererMixin):
                 for card in cards['data']:
                     curr_img = InlineQueryResultPhoto(
                         id=card['id'],
-                        photo_url=card['image_uris']['normal'],
-                        thumb_url=card['image_uris']['small'],
+                        photo_url=card['image_uris']['large'],
+                        thumb_url=card['image_uris']['normal'],
                         photo_width=100, photo_height=140
                     )
 
                     if len(articles) > 14:
                         break
 
-                    # print(curr_img)
                     articles.append(curr_img)
 
             elif cards['object'] == 'card':
                 curr_img = InlineQueryResultPhoto(
                     id=cards['id'],
-                    photo_url=cards['image_uris']['normal'],
-                    thumb_url=cards['image_uris']['small'],
+                    photo_url=cards['image_uris']['large'],
+                    thumb_url=cards['image_uris']['normal'],
                     photo_width=100, photo_height=140
                 )
 
-                print(curr_img)
                 articles.append(curr_img)
 
             # articles = [{'type': 'article', 'id': 'abc', 'title': query_string, 'message_text': query_string}]
