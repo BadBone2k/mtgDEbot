@@ -68,7 +68,6 @@ class InlineHandler(InlineUserHandler, AnswererMixin):
             search_lang = '?include_multilingual=true'
 
             trenner = tuple(["|", "/", ".", ","])
-            api_call = []
             search_string = []
             edition_string = ''
             nextisedition = False
@@ -95,17 +94,17 @@ class InlineHandler(InlineUserHandler, AnswererMixin):
             """
             Suchstring erzeugen, falls noch nicht eingegeben wurde, wird eine zufällige Karte ausgegeben
             """
-            api_call = api_url + search_lang + "&q=" + "+".join(search_string)
+            search_string = api_url + search_lang + "&q=" + "+".join(search_string)
             if edition_string:
                 # print(edition_string)
                 edition_string = "+edition%3A" + edition_string
-                api_call += edition_string
+                search_string += edition_string
 
             if not query_string:
-                api_call = api_random
-            print(api_call)
+                search_string = api_random
+            print(search_string)
 
-            response = requests.get(api_call)
+            response = requests.get(search_string)
 
             """
             Bilder extrahieren
@@ -123,8 +122,19 @@ class InlineHandler(InlineUserHandler, AnswererMixin):
                     if len(articles) > 14:
                         break
 
-                    print(curr_img)
+                    # print(curr_img)
                     articles.append(curr_img)
+
+            elif cards['object'] == 'card':
+                curr_img = InlineQueryResultPhoto(
+                    id=card['id'],
+                    photo_url=card['image_uris']['normal'],
+                    thumb_url=card['image_uris']['small'],
+                    photo_width=100, photo_height=140
+                )
+
+                print(curr_img)
+                articles.append(curr_img)
 
             # articles = [{'type': 'article', 'id': 'abc', 'title': query_string, 'message_text': query_string}]
             return articles
