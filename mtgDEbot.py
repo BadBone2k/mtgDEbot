@@ -117,7 +117,8 @@ class InlineHandler(InlineUserHandler, AnswererMixin):
                         photo_url=card['image_uris']['large'],
                         thumb_url=card['image_uris']['normal'],
                         title=card['name'],
-                        caption=card['type_line'],
+                        caption=card['name'],
+                        description=card['type_line'],
                         # photo_width=100, photo_height=140
                     )
 
@@ -132,7 +133,8 @@ class InlineHandler(InlineUserHandler, AnswererMixin):
                     photo_url=cards['image_uris']['large'],
                     thumb_url=cards['image_uris']['normal'],
                     title=cards['name'],
-                    caption=cards['type_line'],
+                    caption=cards['name'],
+                    description=cards['type_line'],
                     # photo_width=100, photo_height=140
                 )
 
