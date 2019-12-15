@@ -94,7 +94,7 @@ class InlineHandler(InlineUserHandler, AnswererMixin):
             """
             Suchstring erzeugen, falls noch nicht eingegeben wurde, wird eine zufällige Karte ausgegeben
             """
-            search_string = api_url + search_lang + "+".join(search_string)
+            search_string = api_search + search_lang + "+".join(search_string)
             if edition_string:
                 # print(edition_string)
                 edition_string = "+edition%3A" + edition_string
