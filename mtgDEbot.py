@@ -65,7 +65,7 @@ class InlineHandler(InlineUserHandler, AnswererMixin):
             api_url = 'https://api.scryfall.com/cards'
             api_search = api_url + '/search'
             api_random = api_url + '/random'
-            search_lang = '?include_multilingual=true&lang%3Ade&q='
+            search_lang = '?include_multilingual=true&lang%3Ade&lang%3Aen&q='
 
             trenner = tuple(["|", "/", ".", ","])
             search_string = []
@@ -116,7 +116,9 @@ class InlineHandler(InlineUserHandler, AnswererMixin):
                         id=card['id'],
                         photo_url=card['image_uris']['large'],
                         thumb_url=card['image_uris']['normal'],
-                        photo_width=100, photo_height=140
+                        title=card['name'],
+                        caption=card['type_line'],
+                        # photo_width=100, photo_height=140
                     )
 
                     if len(articles) > 14:
@@ -129,7 +131,9 @@ class InlineHandler(InlineUserHandler, AnswererMixin):
                     id=cards['id'],
                     photo_url=cards['image_uris']['large'],
                     thumb_url=cards['image_uris']['normal'],
-                    photo_width=100, photo_height=140
+                    title=cards['name'],
+                    caption=cards['type_line'],
+                    # photo_width=100, photo_height=140
                 )
 
                 articles.append(curr_img)
