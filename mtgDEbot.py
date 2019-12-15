@@ -113,7 +113,13 @@ class InlineHandler(InlineUserHandler, AnswererMixin):
             cards = json.loads(response.text)
             if cards['object'] == 'list':
                 for card in cards['data']:
-                    curr_img = card['image_uris']['normal']
+                    curr_img = InlineQueryResultPhoto(
+                        id=card['id'],
+                        photo_url=card['image_uris']['normal'],
+                        thumb_url=card['image_uris']['small'],
+                        photo_width=100, photo_height=140
+                    )
+
                     print(curr_img)
                     articles.append(curr_img)
 
